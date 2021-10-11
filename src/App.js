@@ -3,10 +3,11 @@ import Webcam from "react-webcam";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import * as cam from "@mediapipe/camera_utils";
 import './App.css';
+import defaultImg from './vback.jpg'
 const App = () => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
-  const [imageURL, setimageURL] = useState('./vback.jpg');
+  const [imageURL, setimageURL] = useState(defaultImg);
 
   const onResults = async (results) => {
     const img = document.getElementById('vbackground')
