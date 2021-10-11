@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/SelfieSegmentation_video/static/css/main.e1d97e77.chunk.css",
-    "main.js": "/SelfieSegmentation_video/static/js/main.044c6bb4.chunk.js",
-    "main.js.map": "/SelfieSegmentation_video/static/js/main.044c6bb4.chunk.js.map",
+    "main.js": "/SelfieSegmentation_video/static/js/main.e82b227b.chunk.js",
+    "main.js.map": "/SelfieSegmentation_video/static/js/main.e82b227b.chunk.js.map",
     "runtime-main.js": "/SelfieSegmentation_video/static/js/runtime-main.8795486a.js",
     "runtime-main.js.map": "/SelfieSegmentation_video/static/js/runtime-main.8795486a.js.map",
     "static/js/2.decb16b9.chunk.js": "/SelfieSegmentation_video/static/js/2.decb16b9.chunk.js",
@@ -11,12 +11,13 @@
     "static/js/3.9bcd6da5.chunk.js.map": "/SelfieSegmentation_video/static/js/3.9bcd6da5.chunk.js.map",
     "index.html": "/SelfieSegmentation_video/index.html",
     "static/css/main.e1d97e77.chunk.css.map": "/SelfieSegmentation_video/static/css/main.e1d97e77.chunk.css.map",
-    "static/js/2.decb16b9.chunk.js.LICENSE.txt": "/SelfieSegmentation_video/static/js/2.decb16b9.chunk.js.LICENSE.txt"
+    "static/js/2.decb16b9.chunk.js.LICENSE.txt": "/SelfieSegmentation_video/static/js/2.decb16b9.chunk.js.LICENSE.txt",
+    "static/media/vback.6540dd9d.jpg": "/SelfieSegmentation_video/static/media/vback.6540dd9d.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.8795486a.js",
     "static/js/2.decb16b9.chunk.js",
     "static/css/main.e1d97e77.chunk.css",
-    "static/js/main.044c6bb4.chunk.js"
+    "static/js/main.e82b227b.chunk.js"
   ]
 }
