@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/SelfieSegmentation_video/static/css/main.c1d6b623.chunk.css",
+    "main.css": "/SelfieSegmentation_video/static/css/main.e1d97e77.chunk.css",
     "main.js": "/SelfieSegmentation_video/static/js/main.044c6bb4.chunk.js",
     "main.js.map": "/SelfieSegmentation_video/static/js/main.044c6bb4.chunk.js.map",
     "runtime-main.js": "/SelfieSegmentation_video/static/js/runtime-main.8795486a.js",
@@ -10,13 +10,13 @@
     "static/js/3.9bcd6da5.chunk.js": "/SelfieSegmentation_video/static/js/3.9bcd6da5.chunk.js",
     "static/js/3.9bcd6da5.chunk.js.map": "/SelfieSegmentation_video/static/js/3.9bcd6da5.chunk.js.map",
     "index.html": "/SelfieSegmentation_video/index.html",
-    "static/css/main.c1d6b623.chunk.css.map": "/SelfieSegmentation_video/static/css/main.c1d6b623.chunk.css.map",
+    "static/css/main.e1d97e77.chunk.css.map": "/SelfieSegmentation_video/static/css/main.e1d97e77.chunk.css.map",
     "static/js/2.decb16b9.chunk.js.LICENSE.txt": "/SelfieSegmentation_video/static/js/2.decb16b9.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.8795486a.js",
     "static/js/2.decb16b9.chunk.js",
-    "static/css/main.c1d6b623.chunk.css",
+    "static/css/main.e1d97e77.chunk.css",
     "static/js/main.044c6bb4.chunk.js"
   ]
 }
