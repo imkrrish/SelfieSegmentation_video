@@ -68,6 +68,34 @@ input {
 .backgrounds img {
     width: 100%;
     height: 95%;
-    
     transform: scaleX(-1);
+}
+
+@media (max-width: 769px) {
+    .container {
+        flex-direction: column;
+        max-width: 100vw;
+    }
+    .videoContainer {
+        width: 100vw;
+        height: 50%;
+    }
+    .backgroundContainer {
+        width: 100vw;
+        height: 50%;
+    }
+    .videoContent {
+        width: 95%;
+        height: 95%;
+        margin-bottom: 0px;
+    }
+    .backgrounds {
+        width: 95%;
+        height: 100%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .file-upload {
+        margin-bottom: 10px;
+    }
 }

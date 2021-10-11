@@ -80,7 +80,6 @@ const App = () => {
           <div className="videoContent">
             <div className="video">
               <Webcam
-                id="video"
                 ref={webcamRef}
                 style={{
                   display: "none",
@@ -90,7 +89,6 @@ const App = () => {
                 }}
               />
               <canvas
-                id="canvas"
                 ref={canvasRef}
                 style={{
                   width: "100%",
@@ -108,7 +106,7 @@ const App = () => {
           </div>
           <label htmlFor="contained-button-file" className="file-upload">
             <input accept="image/*" id="contained-button-file" multiple type="file" onChange={imageHandler} />
-            Upload
+            Choose Background
           </label>
         </div>
       </div>
