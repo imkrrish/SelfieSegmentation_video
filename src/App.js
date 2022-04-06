@@ -4,10 +4,14 @@ import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import * as cam from "@mediapipe/camera_utils";
 import './App.css';
 import defaultImg from './vback.jpg'
+import DisplayLottie from "./DisplatLottie";
+import loader from './85646-loading-dots-blue.json'
+
 const App = () => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [imageURL, setimageURL] = useState(defaultImg);
+  const [load, setLoad] = useState(false);
 
   const onResults = async (results) => {
     const img = document.getElementById('vbackground')
@@ -33,6 +37,7 @@ const App = () => {
     canvasCtx.globalCompositeOperation = 'destination-over';
     canvasCtx.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
     canvasCtx.restore();
+    setLoad(true);
   }
 
   useEffect(() => {
@@ -89,6 +94,14 @@ const App = () => {
                   transform: "scaleX(-1)"
                 }}
               />
+
+              <div className="loader"
+                style={{
+                  display: `${!load ? " " : "none"}`
+                }}
+              >
+                <DisplayLottie animationData={loader} />
+              </div>
               <canvas
                 ref={canvasRef}
                 style={{
