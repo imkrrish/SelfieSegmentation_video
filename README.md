@@ -4,9 +4,6 @@
 
 Remove the Background and add a Virtual Backgroud to Live Camera feed.
 
-<br />
-<br />
-
 <a href="https://imkrrish.github.io/SelfieSegmentation_video/" target="_blank">Live Demo</a>
 
 _Loved the project? Show your love to the developer by starring this repo._
