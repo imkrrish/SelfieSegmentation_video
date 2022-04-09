@@ -4,7 +4,7 @@
 
 Remove the Background and add a Virtual Backgroud to Live Camera feed.
 
-<a href="https://imkrrish.github.io/SelfieSegmentation_video/" target="_blank">Live Demo</a>
+<a href="https://imkrrish.github.io/SelfieSegmentation_video/" target="blank">Live Demo</a>
 
 _Loved the project? Show your love to the developer by starring this repo._
 
@@ -29,7 +29,7 @@ To remove the background from the live camera feed used MediaPipe Selfie Segment
 
 ## 🚀 Getting started
 
-This project is already deployed on <a href="https://imkrrish.github.io/SelfieSegmentation_video/" target="_blank">https://imkrrish.github.io/SelfieSegmentation_video/</a>
+This project is already deployed on <a href="https://imkrrish.github.io/SelfieSegmentation_video/" target="blank">https://imkrrish.github.io/SelfieSegmentation_video/</a>
 
 Instructions for local deployment are given below:
 
