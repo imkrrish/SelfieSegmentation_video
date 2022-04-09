@@ -59,6 +59,6 @@ npm start
 
 5. View local deployment at [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
-## 🤩Feel free to give this repo a ⭐ if you like this repo and want to appreciate our efforts
+## 🤩Feel free to give this repo a ⭐ if you like this repo and want to appreciate efforts
 
 Contributions are welcomed!
