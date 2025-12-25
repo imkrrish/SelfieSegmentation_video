@@ -1,19 +1,39 @@
 import { Layout } from "@/app/Layout";
-
+import { useDevices } from "@/features/devices/hooks/useDevices";
+import { DeviceSelection } from "@/features/devices/components/DeviceSelection";
+import { RawPreview } from "@/features/devices/components/RawPreview";
 function App() {
+  const {
+    state: deviceState,
+    availableCameras,
+    availableMics,
+    selectedCameraId,
+    selectedMicId,
+    requestCamera,
+    requestMicrophone,
+    stopCamera,
+    stopMicrophone
+  } = useDevices();
+
   return (
     <Layout>
-      {/* Primary Preview Region */}
-      <section className="flex-1 rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden flex flex-col relative min-h-[400px]">
-        <div className="flex-1 flex items-center justify-center p-8 text-center text-zinc-500">
-          <p>Camera Pipeline will connect here in Checkpoint 2.</p>
-        </div>
+      <section className="flex-1 flex flex-col relative w-full h-full min-h-[400px]">
+        <RawPreview camera={deviceState.camera} />
       </section>
 
-      {/* Controls & Settings Sidebar */}
       <aside className="w-full md:w-80 flex flex-col gap-4">
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 h-full flex items-center justify-center text-zinc-500">
-          <p className="text-center text-sm">Controls Panel Placeholder</p>
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 flex flex-col">
+          <DeviceSelection 
+            state={deviceState}
+            availableCameras={availableCameras}
+            availableMics={availableMics}
+            selectedCameraId={selectedCameraId}
+            selectedMicId={selectedMicId}
+            onRequestCamera={requestCamera}
+            onRequestMicrophone={requestMicrophone}
+            onStopCamera={stopCamera}
+            onStopMicrophone={stopMicrophone}
+          />
         </div>
       </aside>
     </Layout>
