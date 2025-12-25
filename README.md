@@ -1,64 +1,73 @@
-<div align="center">
+# React + TypeScript + Vite
 
-# Selfie Segmentation Video
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Remove the Background and add a Virtual Backgroud to Live Camera feed.
+Currently, two official plugins are available:
 
-<a href="https://imkrrish.github.io/SelfieSegmentation_video/" target="blank">Live Demo</a>
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-_Loved the project? Show your love to the developer by starring this repo._
+## React Compiler
 
-<br />
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-<img src="https://github.com/imkrrish/imkrrish.github.io/blob/master/content/featured/SelfieSegmentation/SelfieSegmentation.png" style="width: 80%"/>
+## Expanding the ESLint configuration
 
-</div>
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
----
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-A React app that can add virtual background to a live video stream in the browser. We can choose the background from our device storage. 
-To remove the background from the live camera feed used MediaPipe Selfie Segmentation.
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
----
-
-## Tech Stack 💻
-
-- [React.js](https://reactjs.org/)
-- [MediaPipe](https://google.github.io/mediapipe/)
-- [GitHub Pages (Hosting)](https://pages.github.com/)
-
-## 🚀 Getting started
-
-This project is already deployed on <a href="https://imkrrish.github.io/SelfieSegmentation_video/" target="blank">https://imkrrish.github.io/SelfieSegmentation_video/</a>
-
-Instructions for local deployment are given below:
-
-1. Clone the repository
-
-```
-git clone
-```
-
-2. Enter the project directory
-
-```
-cd SelfieSegmentation_video
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-3. Install dependencies
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-npm install
-```
-
-4. Start local dev server
-
-```
-npm start
-```
-
-5. View local deployment at [http://127.0.0.1:3000](http://127.0.0.1:3000)
-
-## 🤩Feel free to give this repo a ⭐ if you like this repo and want to appreciate efforts
-
-Contributions are welcomed!
