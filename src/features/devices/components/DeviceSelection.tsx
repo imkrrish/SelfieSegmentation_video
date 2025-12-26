@@ -1,4 +1,12 @@
 import type { DeviceState } from '../types';
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DeviceSelectionProps {
   state: DeviceState;
@@ -41,42 +49,51 @@ export function DeviceSelection({
         </h3>
         
         <div className="flex flex-col gap-3">
-          {availableCameras.length > 0 ? (
-            <select 
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-md p-2 text-sm text-zinc-300 focus:outline-none focus:border-indigo-500 truncate"
-              value={selectedCameraId || ''}
-              onChange={(e) => onRequestCamera(e.target.value)}
-              disabled={state.camera.status === 'requesting'}
-            >
-              <option value="" disabled>Select Camera</option>
-              {availableCameras.map(cam => (
-                <option key={cam.deviceId} value={cam.deviceId}>
-                  {cam.label || `Camera (${cam.deviceId.slice(0, 5)}...)`}
-                </option>
-              ))}
-            </select>
+          {state.camera.status === 'not-found' ? (
+             <div className="p-3 text-sm rounded bg-zinc-900 border border-zinc-800 text-zinc-400 text-center">
+               No camera detected.
+             </div>
           ) : (
-            <div className="text-xs text-zinc-500">No cameras available.</div>
-          )}
-
-          <div className="flex gap-2">
-            {state.camera.status === 'ready' ? (
-              <button 
-                onClick={onStopCamera}
-                className="flex-1 px-3 py-2 text-xs font-medium rounded-md bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-colors border border-rose-500/20"
-              >
-                Stop Camera
-              </button>
-            ) : (
-              <button 
-                onClick={() => onRequestCamera()}
+            <>
+              <Select
+                value={selectedCameraId || ''}
+                onValueChange={(val) => onRequestCamera(val || undefined)}
                 disabled={state.camera.status === 'requesting'}
-                className="flex-1 px-3 py-2 text-xs font-medium rounded-md bg-indigo-500 text-white hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {state.camera.status === 'requesting' ? 'Requesting...' : 'Start Camera'}
-              </button>
-            )}
-          </div>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Camera" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableCameras.map(cam => (
+                    <SelectItem key={cam.deviceId} value={cam.deviceId}>
+                      {cam.label || `Camera (${cam.deviceId.slice(0, 5)}...)`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex gap-2">
+                {state.camera.status === 'ready' ? (
+                  <Button 
+                    variant="destructive"
+                    className="flex-1"
+                    onClick={onStopCamera}
+                  >
+                    Stop Camera
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="default"
+                    className="flex-1"
+                    onClick={() => onRequestCamera()}
+                    disabled={state.camera.status === 'requesting'}
+                  >
+                    {state.camera.status === 'requesting' ? 'Requesting...' : 'Start Camera'}
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -89,53 +106,62 @@ export function DeviceSelection({
         </h3>
         
         <div className="flex flex-col gap-3">
-          {availableMics.length > 0 ? (
-            <select 
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-md p-2 text-sm text-zinc-300 focus:outline-none focus:border-indigo-500 truncate"
-              value={selectedMicId || ''}
-              onChange={(e) => onRequestMicrophone(e.target.value)}
-              disabled={state.microphone.status === 'requesting'}
-            >
-              <option value="" disabled>Select Microphone</option>
-              <option value="default">Default Microphone</option>
-              {availableMics.map(mic => (
-                <option key={mic.deviceId} value={mic.deviceId}>
-                  {mic.label || `Mic (${mic.deviceId.slice(0, 5)}...)`}
-                </option>
-              ))}
-            </select>
+          {state.microphone.status === 'not-found' ? (
+             <div className="p-3 text-sm rounded bg-zinc-900 border border-zinc-800 text-zinc-400 text-center">
+               No microphone detected.
+             </div>
           ) : (
-            <div className="text-xs text-zinc-500">No microphones available.</div>
-          )}
-
-          <div className="flex gap-2">
-            {state.microphone.status === 'ready' ? (
-              <button 
-                onClick={onStopMicrophone}
-                className="flex-1 px-3 py-2 text-xs font-medium rounded-md bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-colors border border-rose-500/20"
-              >
-                Stop Microphone
-              </button>
-            ) : (
-              <button 
-                onClick={() => onRequestMicrophone()}
+            <>
+              <Select
+                value={selectedMicId || ''}
+                onValueChange={(val) => onRequestMicrophone(val || undefined)}
                 disabled={state.microphone.status === 'requesting'}
-                className="flex-1 px-3 py-2 text-xs font-medium rounded-md bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700"
               >
-                {state.microphone.status === 'requesting' ? 'Requesting...' : 'Start Microphone'}
-              </button>
-            )}
-          </div>
-          
-          {state.microphone.status === 'error' && state.microphone.error && (
-            <div className="text-xs text-rose-400 mt-1 max-w-full truncate">
-              {String(state.microphone.error)}
-            </div>
-          )}
-          {state.microphone.permission === 'denied' && (
-            <div className="text-xs text-rose-400 mt-1">
-              Microphone access denied. WebM recording will fallback to video-only.
-            </div>
+                <SelectTrigger className="w-full bg-zinc-950 border-zinc-800">
+                  <SelectValue placeholder="Select Microphone" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-950 border-zinc-800">
+                  <SelectItem value="default">Default Microphone</SelectItem>
+                  {availableMics.map(mic => (
+                    <SelectItem key={mic.deviceId} value={mic.deviceId}>
+                      {mic.label || `Mic (${mic.deviceId.slice(0, 5)}...)`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex gap-2">
+                {state.microphone.status === 'ready' ? (
+                  <Button 
+                    variant="destructive"
+                    className="flex-1"
+                    onClick={onStopMicrophone}
+                  >
+                    Stop Microphone
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="secondary"
+                    className="flex-1"
+                    onClick={() => onRequestMicrophone()}
+                    disabled={state.microphone.status === 'requesting'}
+                  >
+                    {state.microphone.status === 'requesting' ? 'Requesting...' : 'Start Microphone'}
+                  </Button>
+                )}
+              </div>
+              
+              {state.microphone.status === 'error' && state.microphone.error && (
+                <div className="text-xs text-rose-400 mt-1 max-w-full truncate">
+                  {String(state.microphone.error)}
+                </div>
+              )}
+              {state.microphone.permission === 'denied' && (
+                <div className="text-xs text-rose-400 mt-1">
+                  Microphone access denied. WebM recording will fallback to video-only.
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

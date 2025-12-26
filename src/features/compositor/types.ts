@@ -1,4 +1,6 @@
-// Feature: compositor
-// Local types for canvas compositing
+export type BackgroundMode = 'original' | 'blur';
 
-export type CompositorMode = 'original' | 'blur' | 'image' | 'video';
+export interface CompositorOptions {
+  mode: BackgroundMode;
+  blurAmount?: number;
+}

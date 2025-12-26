@@ -30,6 +30,26 @@ export function useDevices() {
       if (!selectedMicId && mics.length > 0) {
         setSelectedMicId(mics[0].deviceId);
       }
+
+      // Explicitly enforce 'not-found' states if devices physically don't exist
+      setState((prev) => {
+        let nextCamera = prev.camera;
+        if (cameras.length === 0 && prev.camera.status !== 'ready') {
+          nextCamera = { ...prev.camera, status: 'not-found' };
+        } else if (cameras.length > 0 && prev.camera.status === 'not-found') {
+          nextCamera = { ...prev.camera, status: 'idle' };
+        }
+
+        let nextMic = prev.microphone;
+        if (mics.length === 0 && prev.microphone.status !== 'ready') {
+          nextMic = { ...prev.microphone, status: 'not-found' };
+        } else if (mics.length > 0 && prev.microphone.status === 'not-found') {
+          nextMic = { ...prev.microphone, status: 'idle' };
+        }
+
+        if (nextCamera === prev.camera && nextMic === prev.microphone) return prev;
+        return { ...prev, camera: nextCamera, microphone: nextMic };
+      });
     } catch (err) {
       console.error("Failed to enumerate devices", err);
     }
