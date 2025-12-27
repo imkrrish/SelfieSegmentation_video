@@ -11,9 +11,10 @@ interface CompositedViewProps {
   quality?: 'performance' | 'balanced' | 'quality';
   backgroundImageUrl?: string | null;
   backgroundVideoUrl?: string | null;
+  outCanvasRef?: React.RefObject<HTMLCanvasElement | null>;
 }
 
-export function CompositedView({ stream, segmenter, mode, blurAmount = 10, quality = 'balanced', backgroundImageUrl = null, backgroundVideoUrl = null }: CompositedViewProps) {
+export function CompositedView({ stream, segmenter, mode, blurAmount = 10, quality = 'balanced', backgroundImageUrl = null, backgroundVideoUrl = null, outCanvasRef }: CompositedViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [playingStreamId, setPlayingStreamId] = useState<string | null>(null);
@@ -76,7 +77,12 @@ export function CompositedView({ stream, segmenter, mode, blurAmount = 10, quali
 
       {/* The master canvas node. This output is stabilized and can be captured easily via captureStream() later. */}
       <canvas
-        ref={canvasRef}
+        ref={(node) => {
+          canvasRef.current = node;
+          if (outCanvasRef) {
+            outCanvasRef.current = node;
+          }
+        }}
         className="w-full h-full object-cover" 
       />
 

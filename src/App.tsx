@@ -19,6 +19,9 @@ import { useDevices } from "@/features/devices/hooks/useDevices";
 import { DeviceSelection } from "@/features/devices/components/DeviceSelection";
 import { CompositedView } from "@/features/compositor/components/CompositedView";
 import { useSegmentation } from "@/features/segmentation/hooks/useSegmentation";
+import { useCapture } from "@/features/compositor/hooks/useCapture";
+import { Camera } from "lucide-react";
+import { useRef } from "react";
 import type { BackgroundMode } from "@/features/compositor/types";
 
 function App() {
@@ -39,6 +42,9 @@ function App() {
   const [blurAmount, setBlurAmount] = useLocalStorage<number>('ss_blur_amount', 10);
   const [quality, setQuality] = useLocalStorage<'performance' | 'balanced' | 'quality'>('ss_quality', 'balanced');
   const [showOriginal, setShowOriginal] = useState(false);
+
+  const compositorCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { capture, isCapturing } = useCapture(compositorCanvasRef);
 
   const [persistedBgImage, setPersistedBgImage] = useLocalStorage<string>('ss_bg_image', '/backgrounds/office.png');
   const [sessionBgImage, setSessionBgImage] = useState<string | null>(null);
@@ -80,6 +86,7 @@ function App() {
           quality={quality}
           backgroundImageUrl={bgImage}
           backgroundVideoUrl={bgVideo}
+          outCanvasRef={compositorCanvasRef}
         />
       </section>
 
@@ -313,6 +320,23 @@ function App() {
                 </div>
               </div>
             )}
+
+            <Separator className="bg-zinc-800" />
+
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-zinc-100 flex items-center justify-between">
+                Actions
+              </h3>
+              <Button 
+                onClick={capture} 
+                disabled={!activeStream || isCapturing} 
+                variant="default"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-900/20"
+              >
+                <Camera className="w-4 h-4 mr-2" /> 
+                {isCapturing ? "Saving..." : "Take Snapshot"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </aside>
