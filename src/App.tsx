@@ -25,6 +25,7 @@ function App() {
 
   const segmentation = useSegmentation();
   const [mode, setMode] = useState<BackgroundMode>('original');
+  const [bgImage, setBgImage] = useState<string | null>('/backgrounds/office.png');
 
   // We only pass the media stream if the camera is fully ready
   const activeStream = deviceState.camera.status === 'ready' ? deviceState.camera.stream : null;
@@ -36,6 +37,7 @@ function App() {
           stream={activeStream} 
           segmenter={segmentation.segmenter} 
           mode={mode} 
+          backgroundImageUrl={bgImage}
         />
       </section>
 
@@ -106,8 +108,64 @@ function App() {
                 >
                   Blur
                 </Button>
+                <Button
+                  variant={mode === 'image' ? 'secondary' : 'outline'}
+                  className="flex-1 border-dashed"
+                  onClick={() => setMode('image')}
+                  disabled={segmentation.status !== 'ready'}
+                >
+                  Image
+                </Button>
               </div>
             </div>
+
+            {mode === 'image' && (
+              <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                <h3 className="text-sm font-semibold text-zinc-100">
+                  Background
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setBgImage('/backgrounds/office.png')}
+                    className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === '/backgrounds/office.png' ? 'border-indigo-500' : 'border-transparent hover:border-zinc-700'}`}
+                  >
+                    <img src="/backgrounds/office.png" className="w-full h-full object-cover" alt="Office" />
+                  </button>
+                  <button
+                    onClick={() => setBgImage('/backgrounds/nature.png')}
+                    className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === '/backgrounds/nature.png' ? 'border-indigo-500' : 'border-transparent hover:border-zinc-700'}`}
+                  >
+                    <img src="/backgrounds/nature.png" className="w-full h-full object-cover" alt="Nature" />
+                  </button>
+                  <button
+                    onClick={() => setBgImage('/backgrounds/abstract.png')}
+                    className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === '/backgrounds/abstract.png' ? 'border-indigo-500' : 'border-transparent hover:border-zinc-700'}`}
+                  >
+                    <img src="/backgrounds/abstract.png" className="w-full h-full object-cover" alt="Abstract" />
+                  </button>
+                  
+                  {/* Custom Upload */}
+                  <label className="relative aspect-video rounded-md overflow-hidden border-2 border-dashed border-zinc-700 hover:border-zinc-500 bg-zinc-900 flex flex-col items-center justify-center cursor-pointer transition-colors text-zinc-400 hover:text-zinc-300">
+                    <span className="text-xs font-medium">Upload</span>
+                    <span className="text-[10px] mt-1 opacity-70">Custom Image</span>
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      className="hidden" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const url = URL.createObjectURL(file);
+                          setBgImage(url);
+                        }
+                        // Reset value so the exact same file can be uploaded again if needed
+                        e.target.value = '';
+                      }} 
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </aside>

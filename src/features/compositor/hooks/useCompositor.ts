@@ -8,9 +8,24 @@ export function useCompositor(
   segmenter: ImageSegmenter | null,
   mode: BackgroundMode,
   blurAmount: number = 10,
-  active: boolean
+  active: boolean,
+  backgroundImageUrl?: string | null
 ) {
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const backgroundImageRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (!backgroundImageUrl) {
+      backgroundImageRef.current = null;
+      return;
+    }
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      backgroundImageRef.current = img;
+    };
+    img.src = backgroundImageUrl;
+  }, [backgroundImageUrl]);
 
   useEffect(() => {
     if (!active || !videoRef.current || !canvasRef.current) return;
@@ -54,15 +69,41 @@ export function useCompositor(
 
       if (mode === 'original' || !segmenter) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      } else if (mode === 'blur' && segmenter && offCtx) {
+      } else if ((mode === 'blur' || mode === 'image') && segmenter && offCtx) {
         try {
           const result = segmenter.segmentForVideo(video, currentTime);
           
           if (result && result.confidenceMasks && result.confidenceMasks.length > 0) {
-            // 1. Draw blurred video base
-            ctx.filter = `blur(${blurAmount}px)`;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            ctx.filter = 'none';
+            // 1. Draw blurred video base or image base
+            if (mode === 'blur') {
+              ctx.filter = `blur(${blurAmount}px)`;
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              ctx.filter = 'none';
+            } else if (mode === 'image') {
+              if (backgroundImageRef.current) {
+                const img = backgroundImageRef.current;
+                const canvasRatio = canvas.width / canvas.height;
+                const imgRatio = img.width / img.height;
+                let drawX = 0, drawY = 0, drawW = img.width, drawH = img.height;
+                
+                if (imgRatio > canvasRatio) {
+                  drawW = img.height * canvasRatio;
+                  drawX = (img.width - drawW) / 2;
+                } else {
+                  drawH = img.width / canvasRatio;
+                  drawY = (img.height - drawH) / 2;
+                }
+                
+                // Flip the image draw horizontally so it isn't backwards when the final flip happens
+                ctx.save();
+                ctx.scale(-1, 1);
+                ctx.translate(-canvas.width, 0);
+                ctx.drawImage(img, drawX, drawY, drawW, drawH, 0, 0, canvas.width, canvas.height);
+                ctx.restore();
+              } else {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              }
+            }
 
             // 2. Extract smooth mask array (0.0 = background, 1.0 = subject)
             // Note: selfie_segmenter typically returns the subject confidence at index 0.

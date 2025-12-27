@@ -1,4 +1,4 @@
-export type BackgroundMode = 'original' | 'blur';
+export type BackgroundMode = 'original' | 'blur' | 'image';
 
 export interface CompositorOptions {
   mode: BackgroundMode;
