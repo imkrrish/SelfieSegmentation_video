@@ -8,10 +8,12 @@ interface CompositedViewProps {
   segmenter: ImageSegmenter | null;
   mode: BackgroundMode;
   blurAmount?: number;
+  quality?: 'performance' | 'balanced' | 'quality';
   backgroundImageUrl?: string | null;
+  backgroundVideoUrl?: string | null;
 }
 
-export function CompositedView({ stream, segmenter, mode, blurAmount = 10, backgroundImageUrl = null }: CompositedViewProps) {
+export function CompositedView({ stream, segmenter, mode, blurAmount = 10, quality = 'balanced', backgroundImageUrl = null, backgroundVideoUrl = null }: CompositedViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [playingStreamId, setPlayingStreamId] = useState<string | null>(null);
@@ -43,7 +45,7 @@ export function CompositedView({ stream, segmenter, mode, blurAmount = 10, backg
     }
   };
 
-  useCompositor(videoRef, canvasRef, segmenter, mode, blurAmount, isPlaying, backgroundImageUrl);
+  useCompositor(videoRef, canvasRef, segmenter, mode, blurAmount, isPlaying, quality, backgroundImageUrl, backgroundVideoUrl);
 
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl bg-black border border-zinc-800">

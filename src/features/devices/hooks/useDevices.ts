@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import type { DeviceState, CameraState, MicrophoneState } from '../types';
 
 export function useDevices() {
@@ -10,8 +11,8 @@ export function useDevices() {
 
   const [availableCameras, setAvailableCameras] = useState<MediaDeviceInfo[]>([]);
   const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
-  const [selectedCameraId, setSelectedCameraId] = useState<string | null>(null);
-  const [selectedMicId, setSelectedMicId] = useState<string | null>(null);
+  const [selectedCameraId, setSelectedCameraId] = useLocalStorage<string | null>('ss_camera_id', null);
+  const [selectedMicId, setSelectedMicId] = useLocalStorage<string | null>('ss_mic_id', null);
 
   const streamsRef = useRef<{ camera?: MediaStream; mic?: MediaStream }>({});
 
@@ -53,7 +54,7 @@ export function useDevices() {
     } catch (err) {
       console.error("Failed to enumerate devices", err);
     }
-  }, [selectedCameraId, selectedMicId]);
+  }, [selectedCameraId, selectedMicId, setSelectedCameraId, setSelectedMicId]);
 
   useEffect(() => {
     // Run enumeration on mount, deferred to avoid sync setState warning in some linters
@@ -116,7 +117,7 @@ export function useDevices() {
         camera: { status, error: err, permission },
       }));
     }
-  }, [selectedCameraId, enumerateDevices]);
+  }, [selectedCameraId, enumerateDevices, setSelectedCameraId]);
 
   const requestMicrophone = useCallback(async (deviceId?: string) => {
     setState((prev) => ({
@@ -165,7 +166,7 @@ export function useDevices() {
         microphone: { status, error: err, permission },
       }));
     }
-  }, [selectedMicId, enumerateDevices]);
+  }, [selectedMicId, enumerateDevices, setSelectedMicId]);
 
   const stopCamera = useCallback(() => {
     if (streamsRef.current.camera) {
