@@ -20,7 +20,8 @@ import { DeviceSelection } from "@/features/devices/components/DeviceSelection";
 import { CompositedView } from "@/features/compositor/components/CompositedView";
 import { useSegmentation } from "@/features/segmentation/hooks/useSegmentation";
 import { useCapture } from "@/features/compositor/hooks/useCapture";
-import { Camera } from "lucide-react";
+import { useRecording } from "@/features/compositor/hooks/useRecording";
+import { Camera, Video, Square } from "lucide-react";
 import { useRef } from "react";
 import type { BackgroundMode } from "@/features/compositor/types";
 
@@ -74,6 +75,14 @@ function App() {
 
   // We only pass the media stream if the camera is fully ready
   const activeStream = deviceState.camera.status === 'ready' ? deviceState.camera.stream : null;
+  const activeMicStream = deviceState.microphone.status === 'ready' ? deviceState.microphone.stream : null;
+
+  const {
+    recordingState,
+    recordingError,
+    startRecording,
+    stopRecording
+  } = useRecording(compositorCanvasRef, activeMicStream);
 
   return (
     <Layout>
@@ -327,15 +336,41 @@ function App() {
               <h3 className="text-sm font-semibold text-zinc-100 flex items-center justify-between">
                 Actions
               </h3>
-              <Button 
-                onClick={capture} 
-                disabled={!activeStream || isCapturing} 
-                variant="default"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-900/20"
-              >
-                <Camera className="w-4 h-4 mr-2" /> 
-                {isCapturing ? "Saving..." : "Take Snapshot"}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={capture} 
+                  disabled={!activeStream || isCapturing} 
+                  variant="default"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-900/20"
+                >
+                  <Camera className="w-4 h-4 mr-2" /> 
+                  {isCapturing ? "Saving..." : "Snapshot"}
+                </Button>
+
+                {recordingState !== 'recording' ? (
+                  <Button 
+                    onClick={startRecording} 
+                    disabled={!activeStream || recordingState === 'stopping'} 
+                    variant="default"
+                    className="w-full bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-900/20"
+                  >
+                    <Video className="w-4 h-4 mr-2" /> 
+                    {recordingState === 'stopping' ? "Saving..." : "Record"}
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={stopRecording} 
+                    variant="destructive"
+                    className="w-full animate-pulse"
+                  >
+                    <Square className="w-4 h-4 mr-2 fill-current" /> 
+                    Stop
+                  </Button>
+                )}
+              </div>
+              {recordingError && (
+                <p className="text-xs text-rose-500 mt-2">{recordingError}</p>
+              )}
             </div>
           </CardContent>
         </Card>
