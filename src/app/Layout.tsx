@@ -14,7 +14,7 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </header>
 
-      <main className="container mx-auto p-4 md:p-6 pb-24 h-[calc(100vh-3.5rem)] flex flex-col md:flex-row gap-6">
+      <main className="container mx-auto p-4 md:p-6 pb-24 min-h-[calc(100vh-3.5rem)] flex flex-col lg:flex-row gap-6">
         {children}
       </main>
     </div>

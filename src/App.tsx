@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Layout } from "@/app/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -22,7 +22,6 @@ import { useSegmentation } from "@/features/segmentation/hooks/useSegmentation";
 import { useCapture } from "@/features/compositor/hooks/useCapture";
 import { useRecording } from "@/features/compositor/hooks/useRecording";
 import { Camera, Video, Square } from "lucide-react";
-import { useRef } from "react";
 import type { BackgroundMode } from "@/features/compositor/types";
 
 function App() {
@@ -56,6 +55,9 @@ function App() {
   const bgVideo = sessionBgVideo || persistedBgVideo;
 
   const handleSetBgImage = (url: string) => {
+    if (sessionBgImage?.startsWith('blob:') && sessionBgImage !== url) {
+      URL.revokeObjectURL(sessionBgImage);
+    }
     if (url.startsWith('blob:')) {
       setSessionBgImage(url);
     } else {
@@ -65,6 +67,9 @@ function App() {
   };
 
   const handleSetBgVideo = (url: string) => {
+    if (sessionBgVideo?.startsWith('blob:') && sessionBgVideo !== url) {
+      URL.revokeObjectURL(sessionBgVideo);
+    }
     if (url.startsWith('blob:')) {
       setSessionBgVideo(url);
     } else {
@@ -72,6 +77,18 @@ function App() {
       setPersistedBgVideo(url);
     }
   };
+
+  // Cleanup active session blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (sessionBgImage?.startsWith('blob:')) {
+        URL.revokeObjectURL(sessionBgImage);
+      }
+      if (sessionBgVideo?.startsWith('blob:')) {
+        URL.revokeObjectURL(sessionBgVideo);
+      }
+    };
+  }, [sessionBgImage, sessionBgVideo]);
 
   // We only pass the media stream if the camera is fully ready
   const activeStream = deviceState.camera.status === 'ready' ? deviceState.camera.stream : null;
@@ -99,7 +116,7 @@ function App() {
         />
       </section>
 
-      <aside className="w-full md:w-80 flex flex-col gap-4">
+      <aside className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-4">
         <Card className="bg-zinc-950/50 border-zinc-800 shadow-xl overflow-hidden backdrop-blur-sm">
           <CardHeader className="pb-3 bg-zinc-900/40">
             <CardTitle className="text-sm font-semibold text-zinc-100 flex items-center justify-between">
