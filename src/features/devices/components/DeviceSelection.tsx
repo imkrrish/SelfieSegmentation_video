@@ -1,5 +1,6 @@
-import type { DeviceState } from '../types';
+import type { DeviceState } from "../types";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -7,6 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
+import { normalize } from "@/lib/utils";
+import { useMemo } from "react";
 
 interface DeviceSelectionProps {
   state: DeviceState;
@@ -29,42 +34,59 @@ export function DeviceSelection({
   onRequestCamera,
   onRequestMicrophone,
   onStopCamera,
-  onStopMicrophone
+  onStopMicrophone,
 }: DeviceSelectionProps) {
+  const availableCamerasRecord = useMemo(() => {
+    return normalize(availableCameras || [], "deviceId");
+  }, [availableCameras]);
+
+  const availableMicsRecord = useMemo(() => {
+    return normalize(availableMics || [], "deviceId");
+  }, [availableMics]);
 
   if (state.unsupported) {
     return (
-      <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
-        Your browser does not support media devices. Please try a modern browser like Chrome, Firefox, or Safari.
+      <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+        Your browser does not support media devices. Please try a modern browser
+        like Chrome, Firefox, or Safari.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-zinc-100 flex items-center justify-between">
+    <div className="flex flex-col gap-4 w-full">
+      <div className="space-y-2">
+        <Label>
           Camera
-          {state.camera.status === 'ready' && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>}
-        </h3>
-        
-        <div className="flex flex-col gap-3">
-          {state.camera.status === 'not-found' ? (
-             <div className="p-3 text-sm rounded bg-zinc-900 border border-zinc-800 text-zinc-400 text-center">
-               No camera detected.
-             </div>
+          {state.camera.status === "ready" && (
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          )}
+        </Label>
+
+        <div className="flex flex-col gap-2">
+          {state.camera.status === "not-found" ? (
+            <div className="p-2 text-sm rounded-lg border text-muted-foreground text-center">
+              No camera detected.
+            </div>
           ) : (
             <>
               <Select
-                value={selectedCameraId || ''}
+                value={selectedCameraId || ""}
                 onValueChange={(val) => onRequestCamera(val || undefined)}
-                disabled={state.camera.status === 'requesting'}
+                disabled={state.camera.status === "requesting"}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Camera" />
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    <p className="break-all line-clamp-1 whitespace-normal">
+                      {selectedCameraId &&
+                      availableCamerasRecord[selectedCameraId]
+                        ? availableCamerasRecord[selectedCameraId].label
+                        : "Select Camera"}
+                    </p>
+                  </SelectValue>
                 </SelectTrigger>
-                <SelectContent>
-                  {availableCameras.map(cam => (
+                <SelectContent alignItemWithTrigger={false}>
+                  {availableCameras.map((cam) => (
                     <SelectItem key={cam.deviceId} value={cam.deviceId}>
                       {cam.label || `Camera (${cam.deviceId.slice(0, 5)}...)`}
                     </SelectItem>
@@ -72,57 +94,67 @@ export function DeviceSelection({
                 </SelectContent>
               </Select>
 
-              <div className="flex gap-2">
-                {state.camera.status === 'ready' ? (
-                  <Button 
-                    variant="destructive"
-                    className="flex-1"
-                    onClick={onStopCamera}
-                  >
-                    Stop Camera
-                  </Button>
-                ) : (
-                  <Button 
-                    variant="default"
-                    className="flex-1"
-                    onClick={() => onRequestCamera()}
-                    disabled={state.camera.status === 'requesting'}
-                  >
-                    {state.camera.status === 'requesting' ? 'Requesting...' : 'Start Camera'}
-                  </Button>
-                )}
-              </div>
+              {state.camera.status === "ready" ? (
+                <Button variant="destructive" onClick={onStopCamera}>
+                  Stop Camera
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  onClick={() => onRequestCamera()}
+                  disabled={state.camera.status === "requesting"}
+                >
+                  {state.camera.status === "requesting" ? (
+                    <Spinner />
+                  ) : (
+                    "Start Camera"
+                  )}
+                </Button>
+              )}
+
+              {state.camera.status === "error" && state.camera.error && (
+                <div className="text-xs text-destructive max-w-full">
+                  {String(state.camera.error)}
+                </div>
+              )}
             </>
           )}
         </div>
       </div>
 
-      <div className="h-px w-full bg-zinc-800" />
+      <Separator />
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-zinc-100 flex items-center justify-between">
+      <div className="space-y-2">
+        <Label>
           Microphone
-          {state.microphone.status === 'ready' && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>}
-        </h3>
-        
+          {state.microphone.status === "ready" && (
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          )}
+        </Label>
+
         <div className="flex flex-col gap-3">
-          {state.microphone.status === 'not-found' ? (
-             <div className="p-3 text-sm rounded bg-zinc-900 border border-zinc-800 text-zinc-400 text-center">
-               No microphone detected.
-             </div>
+          {state.microphone.status === "not-found" ? (
+            <div className="p-2 text-sm rounded-lg border text-muted-foreground text-center">
+              No microphone detected.
+            </div>
           ) : (
             <>
               <Select
-                value={selectedMicId || ''}
+                value={selectedMicId || ""}
                 onValueChange={(val) => onRequestMicrophone(val || undefined)}
-                disabled={state.microphone.status === 'requesting'}
+                disabled={state.microphone.status === "requesting"}
               >
-                <SelectTrigger className="w-full bg-zinc-950 border-zinc-800">
-                  <SelectValue placeholder="Select Microphone" />
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    <p className="break-all line-clamp-1 whitespace-normal">
+                      {selectedMicId && availableMicsRecord[selectedMicId]
+                        ? availableMicsRecord[selectedMicId].label
+                        : "Select Microphone"}
+                    </p>
+                  </SelectValue>
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-950 border-zinc-800">
-                  <SelectItem value="default">Default Microphone</SelectItem>
-                  {availableMics.map(mic => (
+                <SelectContent alignItemWithTrigger={false}>
+                  {availableMics.map((mic) => (
                     <SelectItem key={mic.deviceId} value={mic.deviceId}>
                       {mic.label || `Mic (${mic.deviceId.slice(0, 5)}...)`}
                     </SelectItem>
@@ -130,37 +162,30 @@ export function DeviceSelection({
                 </SelectContent>
               </Select>
 
-              <div className="flex gap-2">
-                {state.microphone.status === 'ready' ? (
-                  <Button 
-                    variant="destructive"
-                    className="flex-1"
-                    onClick={onStopMicrophone}
-                  >
-                    Stop Microphone
-                  </Button>
-                ) : (
-                  <Button 
-                    variant="secondary"
-                    className="flex-1"
-                    onClick={() => onRequestMicrophone()}
-                    disabled={state.microphone.status === 'requesting'}
-                  >
-                    {state.microphone.status === 'requesting' ? 'Requesting...' : 'Start Microphone'}
-                  </Button>
+              {state.microphone.status === "ready" ? (
+                <Button variant="destructive" onClick={onStopMicrophone}>
+                  Stop Microphone
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  onClick={() => onRequestMicrophone()}
+                  disabled={state.microphone.status === "requesting"}
+                >
+                  {state.microphone.status === "requesting" ? (
+                    <Spinner />
+                  ) : (
+                    "Start Microphone"
+                  )}
+                </Button>
+              )}
+
+              {state.microphone.status === "error" &&
+                state.microphone.error && (
+                  <div className="text-xs text-destructive max-w-full">
+                    {String(state.microphone.error)}
+                  </div>
                 )}
-              </div>
-              
-              {state.microphone.status === 'error' && state.microphone.error && (
-                <div className="text-xs text-rose-400 mt-1 max-w-full truncate">
-                  {String(state.microphone.error)}
-                </div>
-              )}
-              {state.microphone.permission === 'denied' && (
-                <div className="text-xs text-rose-400 mt-1">
-                  Microphone access denied. WebM recording will fallback to video-only.
-                </div>
-              )}
             </>
           )}
         </div>
