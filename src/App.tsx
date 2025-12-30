@@ -297,21 +297,25 @@ function App() {
                   />
                 </button>
                 <button
-                  onClick={() => handleSetBgImage("/backgrounds/nature.png")}
-                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === "/backgrounds/nature.png" ? "border-primary" : "border-transparent hover:border-zinc-700"}`}
+                  onClick={() =>
+                    handleSetBgImage(`${BASE_URL}backgrounds/nature.png`)
+                  }
+                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === `${BASE_URL}backgrounds/nature.png` ? "border-primary" : "border-transparent hover:border-zinc-700"}`}
                 >
                   <img
-                    src="/backgrounds/nature.png"
+                    src={`${BASE_URL}backgrounds/nature.png`}
                     className="w-full h-full object-cover"
                     alt="Nature"
                   />
                 </button>
                 <button
-                  onClick={() => handleSetBgImage("/backgrounds/abstract.png")}
-                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === "/backgrounds/abstract.png" ? "border-primary" : "border-transparent hover:border-zinc-700"}`}
+                  onClick={() =>
+                    handleSetBgImage(`${BASE_URL}backgrounds/abstract.png`)
+                  }
+                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === `${BASE_URL}backgrounds/abstract.png` ? "border-primary" : "border-transparent hover:border-zinc-700"}`}
                 >
                   <img
-                    src="/backgrounds/abstract.png"
+                    src={`${BASE_URL}backgrounds/abstract.png`}
                     className="w-full h-full object-cover"
                     alt="Abstract"
                   />
@@ -355,9 +359,11 @@ function App() {
                 </button>
                 <button
                   onClick={() =>
-                    handleSetBgVideo("/backgrounds/videos/nature-loop.mp4")
+                    handleSetBgVideo(
+                      `${BASE_URL}backgrounds/videos/nature-loop.mp4`,
+                    )
                   }
-                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all bg-background flex items-center justify-center ${bgVideo === "/backgrounds/videos/nature-loop.mp4" ? "border-primary hover:border-primary" : "hover:border-primary/50"}`}
+                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all bg-background flex items-center justify-center ${bgVideo === `${BASE_URL}backgrounds/videos/nature-loop.mp4` ? "border-primary hover:border-primary" : "hover:border-primary/50"}`}
                 >
                   <span className="text-xs font-medium text-zinc-400">
                     Nature
@@ -365,9 +371,11 @@ function App() {
                 </button>
                 <button
                   onClick={() =>
-                    handleSetBgVideo("/backgrounds/videos/abstract-loop.mp4")
+                    handleSetBgVideo(
+                      `${BASE_URL}backgrounds/videos/abstract-loop.mp4`,
+                    )
                   }
-                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all bg-background flex items-center justify-center ${bgVideo === "/backgrounds/videos/abstract-loop.mp4" ? "border-primary hover:border-primary" : "hover:border-primary/50"}`}
+                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all bg-background flex items-center justify-center ${bgVideo === `${BASE_URL}backgrounds/videos/abstract-loop.mp4` ? "border-primary hover:border-primary" : "hover:border-primary/50"}`}
                 >
                   <span className="text-xs font-medium text-zinc-400">
                     Abstract
