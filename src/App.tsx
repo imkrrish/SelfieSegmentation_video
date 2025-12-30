@@ -31,6 +31,11 @@ import { Camera, Video, Square } from "lucide-react";
 import type { BackgroundMode } from "@/features/compositor/types";
 import { Spinner } from "@/components/ui/spinner";
 
+const BASE_URL = import.meta.env.BASE_URL || "";
+
+const OFFICE_BG = `${BASE_URL}backgrounds/office.png`;
+const OFFICE_VIDEO = `${BASE_URL}backgrounds/videos/office-loop.mp4`;
+
 function App() {
   const {
     state: deviceState,
@@ -63,14 +68,14 @@ function App() {
 
   const [persistedBgImage, setPersistedBgImage] = useLocalStorage<string>(
     "ss_bg_image",
-    "/backgrounds/office.png",
+    OFFICE_BG,
   );
   const [sessionBgImage, setSessionBgImage] = useState<string | null>(null);
   const bgImage = sessionBgImage || persistedBgImage;
 
   const [persistedBgVideo, setPersistedBgVideo] = useLocalStorage<string>(
     "ss_bg_video",
-    "/backgrounds/videos/office-loop.mp4",
+    OFFICE_VIDEO,
   );
   const [sessionBgVideo, setSessionBgVideo] = useState<string | null>(null);
   const bgVideo = sessionBgVideo || persistedBgVideo;
@@ -282,11 +287,11 @@ function App() {
               <Label className="text-muted-foreground">Background</Label>
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => handleSetBgImage("/backgrounds/office.png")}
-                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === "/backgrounds/office.png" ? "border-primary" : "border-transparent hover:border-zinc-700"}`}
+                  onClick={() => handleSetBgImage(OFFICE_BG)}
+                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all ${bgImage === OFFICE_BG ? "border-primary" : "border-transparent hover:border-zinc-700"}`}
                 >
                   <img
-                    src="/backgrounds/office.png"
+                    src={OFFICE_BG}
                     className="w-full h-full object-cover"
                     alt="Office"
                   />
@@ -341,10 +346,8 @@ function App() {
               <Label className="text-muted-foreground">Background Video</Label>
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() =>
-                    handleSetBgVideo("/backgrounds/videos/office-loop.mp4")
-                  }
-                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all bg-background flex items-center justify-center ${bgVideo === "/backgrounds/videos/office-loop.mp4" ? "border-primary hover:border-primary" : "hover:border-primary/50"}`}
+                  onClick={() => handleSetBgVideo(OFFICE_VIDEO)}
+                  className={`relative aspect-video rounded-md overflow-hidden border-2 transition-all bg-background flex items-center justify-center ${bgVideo === OFFICE_VIDEO ? "border-primary hover:border-primary" : "hover:border-primary/50"}`}
                 >
                   <span className="text-xs font-medium text-muted-foreground">
                     Office

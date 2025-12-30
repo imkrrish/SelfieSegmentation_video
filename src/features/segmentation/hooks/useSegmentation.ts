@@ -1,10 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
-import { FilesetResolver, ImageSegmenter } from '@mediapipe/tasks-vision';
-import type { SegmentationState } from '../types';
+import { useState, useEffect, useRef } from "react";
+import { FilesetResolver, ImageSegmenter } from "@mediapipe/tasks-vision";
+import type { SegmentationState } from "../types";
+
+const BASE_URL = import.meta.env.BASE_URL || "";
+
+const MODEL_PATH = `${BASE_URL}models/selfie_segmenter.tflite`;
 
 export function useSegmentation() {
   const [state, setState] = useState<SegmentationState>({
-    status: 'idle',
+    status: "idle",
     segmenter: null,
   });
 
@@ -14,22 +18,22 @@ export function useSegmentation() {
     let active = true;
 
     async function initializeSegmenter() {
-      setState(prev => ({ ...prev, status: 'loading', error: undefined }));
+      setState((prev) => ({ ...prev, status: "loading", error: undefined }));
 
       try {
         // We load the WASM files from the official CDN to avoid complex bundling
         // Note: The privacy model allows client-side libraries and CDNs explicitly.
         const vision = await FilesetResolver.forVisionTasks(
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm"
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm",
         );
 
         let segmenter: ImageSegmenter;
-        
+
         try {
           // Attempt using the GPU delegate first for maximum performance
           segmenter = await ImageSegmenter.createFromOptions(vision, {
             baseOptions: {
-              modelAssetPath: "/models/selfie_segmenter.tflite",
+              modelAssetPath: MODEL_PATH,
               delegate: "GPU",
             },
             runningMode: "VIDEO",
@@ -37,11 +41,14 @@ export function useSegmentation() {
             outputConfidenceMasks: true,
           });
         } catch (gpuError) {
-          console.warn("Segmentation GPU delegate failed, gracefully falling back to CPU", gpuError);
+          console.warn(
+            "Segmentation GPU delegate failed, gracefully falling back to CPU",
+            gpuError,
+          );
           // Fallback to CPU delegate if GPU initialization fails
           segmenter = await ImageSegmenter.createFromOptions(vision, {
             baseOptions: {
-              modelAssetPath: "/models/selfie_segmenter.tflite",
+              modelAssetPath: MODEL_PATH,
               delegate: "CPU",
             },
             runningMode: "VIDEO",
@@ -53,7 +60,7 @@ export function useSegmentation() {
         if (active) {
           segmenterRef.current = segmenter;
           setState({
-            status: 'ready',
+            status: "ready",
             segmenter,
           });
         } else {
@@ -64,7 +71,7 @@ export function useSegmentation() {
         if (active) {
           console.error("Failed to initialize segmenter:", err);
           setState({
-            status: 'error',
+            status: "error",
             segmenter: null,
             error: err instanceof Error ? err.message : String(err),
           });
@@ -82,7 +89,7 @@ export function useSegmentation() {
         segmenterRef.current.close();
         segmenterRef.current = null;
       }
-      setState({ status: 'idle', segmenter: null, error: undefined });
+      setState({ status: "idle", segmenter: null, error: undefined });
     };
   }, []);
 
