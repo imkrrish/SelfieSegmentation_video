@@ -1,6 +1,12 @@
 import { useState, useCallback } from 'react';
+import { timestampId, downloadBlob } from '@/lib/download';
 
-export function useCapture(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
+interface UseCaptureReturn {
+  capture: () => void;
+  isCapturing: boolean;
+}
+
+export function useCapture(canvasRef: React.RefObject<HTMLCanvasElement | null>): UseCaptureReturn {
   const [isCapturing, setIsCapturing] = useState(false);
 
   const capture = useCallback(() => {
@@ -20,20 +26,7 @@ export function useCapture(canvasRef: React.RefObject<HTMLCanvasElement | null>)
           return;
         }
 
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        
-        // Deterministic filename strategy: scene-switch-[timestamp].png
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        a.download = `scene-switch-${timestamp}.png`;
-        
-        document.body.appendChild(a);
-        a.click();
-        
-        // Cleanup
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        downloadBlob(blob, `scene-switch-${timestampId()}.png`);
         
         setIsCapturing(false);
       }, 'image/png');

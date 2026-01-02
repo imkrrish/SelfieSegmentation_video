@@ -1,8 +1,29 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import type { DeviceState, CameraState, MicrophoneState } from "../types";
+import type { DeviceState, MediaDeviceState } from "../types";
+import { stopStream } from "../utils/stopStream";
+import { buildAudioConstraints, buildVideoConstraints } from "../utils/constraints";
 
-export function useDevices() {
+/** Safely coerce an unknown thrown value into an Error. */
+function toError(value: unknown): Error {
+  if (value instanceof Error) return value;
+  return new Error(String(value));
+}
+
+export interface UseDevicesReturn {
+  state: DeviceState;
+  availableCameras: MediaDeviceInfo[];
+  availableMics: MediaDeviceInfo[];
+  selectedCameraId: string | null;
+  selectedMicId: string | null;
+  requestCamera: (deviceId?: string) => Promise<void>;
+  requestMicrophone: (deviceId?: string) => Promise<void>;
+  enumerateDevices: () => Promise<void>;
+  stopCamera: () => void;
+  stopMicrophone: () => void;
+}
+
+export function useDevices(): UseDevicesReturn {
   const [state, setState] = useState<DeviceState>({
     camera: { status: "idle", permission: "prompt" },
     microphone: { status: "idle", permission: "prompt" },
@@ -96,18 +117,12 @@ export function useDevices() {
       try {
         const targetDeviceId = deviceId || selectedCameraId;
         const constraints: MediaStreamConstraints = {
-          video: targetDeviceId
-            ? { deviceId: { exact: targetDeviceId } }
-            : true,
+          video: buildVideoConstraints(targetDeviceId),
         };
 
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-        if (streamsRef.current.camera) {
-          streamsRef.current.camera
-            .getTracks()
-            .forEach((track) => track.stop());
-        }
+        stopStream(streamsRef.current.camera);
         streamsRef.current.camera = stream;
 
         setAvailableCameras((prev) => {
@@ -131,10 +146,10 @@ export function useDevices() {
           },
         }));
       } catch (error: unknown) {
-        let status: CameraState["status"] = "error";
-        let permission: CameraState["permission"] = "prompt";
+        let status: MediaDeviceState["status"] = "error";
+        let permission: MediaDeviceState["permission"] = "prompt";
 
-        const err = error as Error;
+        const err = toError(error);
         if (err.name === "NotAllowedError" || err.name === "SecurityError") {
           permission = "denied";
         } else if (
@@ -166,16 +181,12 @@ export function useDevices() {
       try {
         const targetDeviceId = deviceId || selectedMicId;
         const constraints: MediaStreamConstraints = {
-          audio: targetDeviceId
-            ? { deviceId: { exact: targetDeviceId } }
-            : true,
+          audio: buildAudioConstraints(targetDeviceId),
         };
 
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-        if (streamsRef.current.mic) {
-          streamsRef.current.mic.getTracks().forEach((track) => track.stop());
-        }
+        stopStream(streamsRef.current.mic);
         streamsRef.current.mic = stream;
 
         setAvailableMics((prev) => {
@@ -199,10 +210,10 @@ export function useDevices() {
           },
         }));
       } catch (error: unknown) {
-        let status: MicrophoneState["status"] = "error";
-        let permission: MicrophoneState["permission"] = "prompt";
+        let status: MediaDeviceState["status"] = "error";
+        let permission: MediaDeviceState["permission"] = "prompt";
 
-        const err = error as Error;
+        const err = toError(error);
         if (err.name === "NotAllowedError" || err.name === "SecurityError") {
           permission = "denied";
         } else if (
@@ -223,7 +234,7 @@ export function useDevices() {
 
   const stopCamera = useCallback(() => {
     if (streamsRef.current.camera) {
-      streamsRef.current.camera.getTracks().forEach((track) => track.stop());
+      stopStream(streamsRef.current.camera);
       streamsRef.current.camera = undefined;
       setState((prev) => ({
         ...prev,
@@ -234,7 +245,7 @@ export function useDevices() {
 
   const stopMicrophone = useCallback(() => {
     if (streamsRef.current.mic) {
-      streamsRef.current.mic.getTracks().forEach((track) => track.stop());
+      stopStream(streamsRef.current.mic);
       streamsRef.current.mic = undefined;
       setState((prev) => ({
         ...prev,
@@ -248,12 +259,8 @@ export function useDevices() {
     const activeStreams = streamsRef.current;
     return () => {
       // We only clean up the refs here, preventing stale closures from stopping active streams during rerenders
-      if (activeStreams.camera) {
-        activeStreams.camera.getTracks().forEach((t) => t.stop());
-      }
-      if (activeStreams.mic) {
-        activeStreams.mic.getTracks().forEach((t) => t.stop());
-      }
+      stopStream(activeStreams.camera);
+      stopStream(activeStreams.mic);
     };
   }, []);
 

@@ -1,4 +1,5 @@
 import type { DeviceState } from "../types";
+import { getDeviceLabel } from "../utils/deviceLabel";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -78,10 +79,7 @@ export function DeviceSelection({
                 <SelectTrigger className="w-full">
                   <SelectValue>
                     <p className="break-all line-clamp-1 whitespace-normal">
-                      {selectedCameraId &&
-                      availableCamerasRecord[selectedCameraId]
-                        ? availableCamerasRecord[selectedCameraId].label
-                        : "Select Camera"}
+                      {getDeviceLabel(availableCamerasRecord, selectedCameraId, "Select Camera")}
                     </p>
                   </SelectValue>
                 </SelectTrigger>
@@ -147,9 +145,7 @@ export function DeviceSelection({
                 <SelectTrigger className="w-full">
                   <SelectValue>
                     <p className="break-all line-clamp-1 whitespace-normal">
-                      {selectedMicId && availableMicsRecord[selectedMicId]
-                        ? availableMicsRecord[selectedMicId].label
-                        : "Select Microphone"}
+                      {getDeviceLabel(availableMicsRecord, selectedMicId, "Select Microphone")}
                     </p>
                   </SelectValue>
                 </SelectTrigger>

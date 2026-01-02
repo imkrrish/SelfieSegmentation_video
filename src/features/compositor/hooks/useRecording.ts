@@ -1,11 +1,19 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { timestampId, downloadBlob } from '@/lib/download';
 
 export type RecordingState = 'idle' | 'recording' | 'stopping' | 'error';
+
+export interface UseRecordingReturn {
+  recordingState: RecordingState;
+  recordingError: string | null;
+  startRecording: () => void;
+  stopRecording: () => void;
+}
 
 export function useRecording(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   audioStream: MediaStream | null
-) {
+): UseRecordingReturn {
   const [recordingState, setRecordingState] = useState<RecordingState>('idle');
   const [recordingError, setRecordingError] = useState<string | null>(null);
   
@@ -74,22 +82,7 @@ export function useRecording(
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'video/webm' });
         chunksRef.current = [];
         
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        a.download = `scene-switch-${timestamp}.webm`;
-        
-        document.body.appendChild(a);
-        a.click();
-        
-        document.body.removeChild(a);
-        
-        // Delay revoking slightly to ensure the browser has initiated the download
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 100);
+        downloadBlob(blob, `scene-switch-${timestampId()}.webm`);
         
         cleanupStreams();
         setRecordingState('idle');

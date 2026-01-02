@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import type { ImageSegmenter } from "@mediapipe/tasks-vision";
-import type { BackgroundMode } from "../types";
+import type { BackgroundMode, QualityLevel } from "../types";
 import { useCompositor } from "../hooks/useCompositor";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
@@ -10,7 +10,7 @@ interface CompositedViewProps {
   segmenter: ImageSegmenter | null;
   mode: BackgroundMode;
   blurAmount?: number;
-  quality?: "performance" | "balanced" | "quality";
+  quality?: QualityLevel;
   backgroundImageUrl?: string | null;
   backgroundVideoUrl?: string | null;
   outCanvasRef?: React.RefObject<HTMLCanvasElement | null>;

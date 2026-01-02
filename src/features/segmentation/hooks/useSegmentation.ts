@@ -1,12 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { FilesetResolver, ImageSegmenter } from "@mediapipe/tasks-vision";
 import type { SegmentationState } from "../types";
+import { MODEL_PATH, VISION_WASM_CDN_URL } from "../constants";
 
-const BASE_URL = import.meta.env.BASE_URL || "";
-
-const MODEL_PATH = `${BASE_URL}models/selfie_segmenter.tflite`;
-
-export function useSegmentation() {
+export function useSegmentation(): SegmentationState {
   const [state, setState] = useState<SegmentationState>({
     status: "idle",
     segmenter: null,
@@ -23,9 +20,7 @@ export function useSegmentation() {
       try {
         // We load the WASM files from the official CDN to avoid complex bundling
         // Note: The privacy model allows client-side libraries and CDNs explicitly.
-        const vision = await FilesetResolver.forVisionTasks(
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm",
-        );
+        const vision = await FilesetResolver.forVisionTasks(VISION_WASM_CDN_URL);
 
         let segmenter: ImageSegmenter;
 
